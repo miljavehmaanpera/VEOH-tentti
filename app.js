@@ -5,6 +5,8 @@ const session = require('express-session');
 
 let app = express();
 
+app.use(express.static('public'));
+
 app.use(body_parser.urlencoded({
     extended: true
 }));
@@ -29,9 +31,11 @@ let matkat = [];
 app.get('/', (req, res, next) => {
     res.write(`
     <html>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
     <head><meta charset='utf-8'></head>
     <body>
-    <h1>Matkalasku ja ajopäiväkirja</h1>
+    <h1>Matkalasku- ja ajopäiväkirja</h1><br>
+    <h3>Matkat</h3>
     <table border=1>
     <tr>
         <td>Päivämäärä</td>
@@ -54,21 +58,20 @@ app.get('/', (req, res, next) => {
             <td align=center>${matka.paivarahat}</td>
             <td align=center>${matka.osapaivarahat}</td>
             <td align=center>${matka.ateriakorvaus}</td>
-            <td align-center>${korvaus}</td>
+            <td align-center>${korvaus} €</td>
         </tr>
         `);
         kokonaiskorvaus=kokonaiskorvaus+korvaus;
     });
 
-    
     res.write(`
     </table><br>
     Kokonaiskorvaus: ${kokonaiskorvaus} €
     <br><br>
     <form action="/poista-kaikki" method="POST">
         <button type="submit">Poista kaikki</button>
-    </form>
-    <h2>Syötä uusi matka</h2>
+    </form><br>
+    <h3>Syötä uusi matka:</h3>
         <form action="/uusi-matka" method="POST">
             Päivämäärä:<br>
             <input type="date" name="paivamaara"><br><br>
@@ -77,12 +80,12 @@ app.get('/', (req, res, next) => {
             Kilometrit:<br>
             <input type="number" name="kilometrit"><br><br>
             Päivärahat (kpl):<br>
-            <input type="number" name="paivarahat"><br><br>
+            <input type="number" name="paivarahat" value=0><br><br>
             Osapäivärahat (kpl):<br>
-            <input type="number" name="osapaivarahat"><br><br>
+            <input type="number" name="osapaivarahat" value=0><br><br>
             Ateriakorvaus (kpl):<br>
-            <input type="number" name="ateriakorvaus"><br><br>
-            <button type="submit">Lisää</button>
+            <input type="number" name="ateriakorvaus" value=0><br><br>
+            <button type="submit">Lisää matka</button>
         </form>
     </body>
     <html>
@@ -107,12 +110,6 @@ app.post('/poista-kaikki', (req,res,next)=>{
     matkat=[];
     return res.redirect('/');
 });
-
-
-
-
-
-
 
 
 
